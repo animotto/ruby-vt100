@@ -56,8 +56,8 @@ class VT100
   SGR_COLOR_BG_WHITE   = 47
   SGR_COLOR_BG_ADVANCE = 48
   SGR_COLOR_BG_DEFAULT = 49
-  SGR_COLOR_8BIT       = "5"
-  SGR_COLOR_24BIT      = "2"
+  SGR_COLOR_8BIT       = 5
+  SGR_COLOR_24BIT      = 2
 
   ##
   # Creates new VT100 object
