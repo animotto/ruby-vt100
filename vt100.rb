@@ -1,3 +1,5 @@
+require "io/console"
+
 class VT100
   CSI       = "\x1b[" # Control Sequence Introducer
   SEP       = ";"     # Parameters separator
@@ -15,6 +17,9 @@ class VT100
   CSI_SGR   = "m" # Select Graphic Rendition
   CSI_SCP   = "s" # Save Cursor Position
   CSI_RCP   = "u" # Restore Cursor Position
+
+  CSI_DSR_CUP           = "6n" # Cursor position
+  CSI_DSR_CUP_RESPONSE  = "R" # Cursor position response
 
   ED_DOWN     = 0 # Clear screen from cursor down
   ED_UP       = 1 # Clear screen from cursor up
@@ -61,8 +66,9 @@ class VT100
 
   ##
   # Creates new VT100 object
-  def initialize(out = $stdout)
-    @out = out
+  def initialize(stdin = $stdin, stdout = $stdout)
+    @stdin = stdin
+    @stdout = stdout
   end
 
   ##
@@ -173,13 +179,46 @@ class VT100
     write(CSI, CSI_RCP)
   end
 
+  ##
+  # Gets cursor position
+  def pos
+    data = String.new
+    @stdin.raw do
+      write(CSI, CSI_DSR_CUP)
+      while data != CSI do
+        data << read
+      end
+      data.clear
+      while (char = read) != CSI_DSR_CUP_RESPONSE
+        data << char
+      end
+    end
+    return data.split(";", 2)
+  end
+
+  ##
+  # Gets terminal size
+  def size
+    save
+    move_to(999, 999)
+    row, col = pos
+    restore
+    return row, col
+  end
+
   private
+
+  ##
+  # Reads data from I/O object
+  def read
+    @stdin.readchar
+  end
 
   ##
   # Writes data to I/O object
   def write(*data)
-    @out.write(data.join)
-    @out.flush
+    @stdout.write(data.join)
+    @stdout.flush
   end
 end
 
