@@ -193,7 +193,7 @@ class VT100
         data << char
       end
     end
-    return data.split(";", 2)
+    return data.split(";", 2).map(&:to_i)
   end
 
   ##
