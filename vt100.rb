@@ -32,40 +32,33 @@ class VT100
   EL_LEFT     = 1 # Clear line from cursor left
   EL_ENTIRE   = 2 # Clear entire line
 
-  SGR_RESET            = 0
-  SGR_BOLD             = 1
-  SGR_UNDER            = 4
-  SGR_BLINK            = 5
-  SGR_REVERSE          = 7
-  SGR_STRIKE           = 9
-  SGR_NOBOLD           = 21
-  SGR_NORMAL           = 22
-  SGR_NOUNDER          = 24
-  SGR_NOBLINK          = 25
-  SGR_NOREVERSE        = 27
-  SGR_NOSTRIKE         = 29
-  SGR_COLOR_FG_BLACK   = 30
-  SGR_COLOR_FG_RED     = 31
-  SGR_COLOR_FG_GREEN   = 32
-  SGR_COLOR_FG_YELLOW  = 33
-  SGR_COLOR_FG_BLUE    = 34
-  SGR_COLOR_FG_MAGENTA = 35
-  SGR_COLOR_FG_CYAN    = 36
-  SGR_COLOR_FG_WHITE   = 37
-  SGR_COLOR_FG_ADVANCE = 38
-  SGR_COLOR_FG_DEFAULT = 39
-  SGR_COLOR_BG_BLACK   = 40
-  SGR_COLOR_BG_RED     = 41
-  SGR_COLOR_BG_GREEN   = 42
-  SGR_COLOR_BG_YELLOW  = 43
-  SGR_COLOR_BG_BLUE    = 44
-  SGR_COLOR_BG_MAGENTA = 45
-  SGR_COLOR_BG_CYAN    = 46
-  SGR_COLOR_BG_WHITE   = 47
-  SGR_COLOR_BG_ADVANCE = 48
-  SGR_COLOR_BG_DEFAULT = 49
-  SGR_COLOR_8BIT       = 5
-  SGR_COLOR_24BIT      = 2
+  A_RESET            = 0
+  A_BOLD             = 1
+  A_UNDER            = 4
+  A_BLINK            = 5
+  A_REVERSE          = 7
+  A_STRIKE           = 9
+  A_NOBOLD           = 21
+  A_NORMAL           = 22
+  A_NOUNDER          = 24
+  A_NOBLINK          = 25
+  A_NOREVERSE        = 27
+  A_NOSTRIKE         = 29
+  A_COLOR_FG         = 30
+  A_COLOR_BG         = 40
+  A_COLOR_8BIT       = 5
+  A_COLOR_24BIT      = 2
+
+  C_BLACK   = 0
+  C_RED     = 1
+  C_GREEN   = 2
+  C_YELLOW  = 3
+  C_BLUE    = 4
+  C_MAGENTA = 5
+  C_CYAN    = 6
+  C_WHITE   = 7
+  C_ADVANCE = 8
+  C_DEFAULT = 9
 
   ##
   # Creates new VT100 object
@@ -79,7 +72,7 @@ class VT100
   def move_up(pos = 1)
     write(CSI, pos, CSI_CUU)
   end
-  
+
   ##
   # Moves cursor down
   def move_down(pos = 1)
@@ -141,33 +134,45 @@ class VT100
   end
 
   ##
-  # Sets graphic rendition
-  def sgr(*params)
-    write(CSI, params.join(SEP), CSI_SGR)
+  # Sets attributes
+  def attr(*attrs)
+    write(CSI, attrs.join(SEP), CSI_SGR)
+  end
+
+  ##
+  # Sets foreground color
+  def color_fg(color)
+    write(CSI, A_COLOR_FG + color, CSI_SGR)
+  end
+
+  ##
+  # Sets background color
+  def color_bg(color)
+    write(CSI, A_COLOR_BG + color, CSI_SGR)
   end
 
   ##
   # Sets foreground 8-bit color
   def color8_fg(color)
-    write(CSI, SGR_COLOR_FG_ADVANCE, SEP, SGR_COLOR_8BIT, SEP, color, CSI_SGR)
+    write(CSI, A_COLOR_FG_ADVANCE, SEP, A_COLOR_8BIT, SEP, color, CSI_SGR)
   end
 
   ##
   # Sets background 8-bit color
   def color8_bg(color)
-    write(CSI, SGR_COLOR_BG_ADVANCE, SEP, SGR_COLOR_8BIT, SEP, color, CSI_SGR)
+    write(CSI, A_COLOR_BG_ADVANCE, SEP, A_COLOR_8BIT, SEP, color, CSI_SGR)
   end
 
   ##
   # Sets foreground 24-bit color
   def color24_fg(r, g, b)
-    write(CSI, SGR_COLOR_FG_ADVANCE, SEP, SGR_COLOR_24BIT, r, SEP, g, SEP, b, CSI_SGR)
+    write(CSI, A_COLOR_FG_ADVANCE, SEP, A_COLOR_24BIT, r, SEP, g, SEP, b, CSI_SGR)
   end
 
   ##
   # Sets background 24-bit color
   def color24_bg(r, g, b)
-    write(CSI, SGR_COLOR_BG_ADVANCE, SEP, SGR_COLOR_24BIT, r, SEP, g, SEP, b, CSI_SGR)
+    write(CSI, A_COLOR_BG_ADVANCE, SEP, A_COLOR_24BIT, r, SEP, g, SEP, b, CSI_SGR)
   end
 
   ##
