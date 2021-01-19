@@ -18,8 +18,11 @@ class VT100
   CSI_SCP   = "s" # Save Cursor Position
   CSI_RCP   = "u" # Restore Cursor Position
 
-  CSI_DSR_CUP           = "6n" # Cursor position
-  CSI_DSR_CUP_RESPONSE  = "R" # Cursor position response
+  CSI_DSR_CUP           = "6n"  # Cursor position
+  CSI_DSR_CUP_RESPONSE  = "R"   # Cursor position response
+
+  CSI_CURSOR_HIDE   = "?25l"  # Hide cursor
+  CSI_CURSOR_SHOW   = "?25h"  # Show cursor
 
   ED_DOWN     = 0 # Clear screen from cursor down
   ED_UP       = 1 # Clear screen from cursor up
@@ -169,14 +172,26 @@ class VT100
 
   ##
   # Saves cursor position
-  def save
+  def cursor_save
     write(CSI, CSI_SCP)
   end
 
   ##
   # Retores cursor position
-  def restore
+  def cursor_restore
     write(CSI, CSI_RCP)
+  end
+
+  ##
+  # Hides cursor
+  def cursor_hide
+    write(CSI, CSI_CURSOR_HIDE)
+  end
+
+  ##
+  # Shows cursor
+  def cursor_show
+    write(CSI, CSI_CURSOR_SHOW)
   end
 
   ##
@@ -205,8 +220,6 @@ class VT100
     restore
     return row, col
   end
-
-  private
 
   ##
   # Reads data from I/O object
